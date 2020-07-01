@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Label,
@@ -32,6 +32,10 @@ import { getChartMetadataRegistry } from '@superset-ui/chart';
 
 import ControlHeader from '../ControlHeader';
 import './VizTypeControl.less';
+import {
+  useDynamicPluginContext,
+  LoadingStatus,
+} from 'src/components/DynamicPlugins/PluginContext';
 
 const propTypes = {
   description: PropTypes.string,
@@ -100,6 +104,19 @@ const DEFAULT_ORDER = [
 ];
 
 const typesWithDefaultOrder = new Set(DEFAULT_ORDER);
+
+function VizSupportWarning({ registry, vizType }) {
+  const state = useDynamicPluginContext();
+  if (state.status === LoadingStatus.LOADING || registry.has(vizType)) {
+    return null;
+  }
+  return (
+    <div className="text-danger">
+      <i className="fa fa-exclamation-circle text-danger" />{' '}
+      <small>{t('This visualization type is not supported.')}</small>
+    </div>
+  );
+}
 
 export default class VizTypeControl extends React.PureComponent {
   constructor(props) {
@@ -203,12 +220,7 @@ export default class VizTypeControl extends React.PureComponent {
             <Label onClick={this.toggleModal} style={LABEL_STYLE}>
               {registry.has(value) ? registry.get(value).name : `${value}`}
             </Label>
-            {!registry.has(value) && (
-              <div className="text-danger">
-                <i className="fa fa-exclamation-circle text-danger" />{' '}
-                <small>{t('This visualization type is not supported.')}</small>
-              </div>
-            )}
+            <VizSupportWarning registry={registry} vizType={value} />
           </>
         </OverlayTrigger>
         <Modal

@@ -25,6 +25,10 @@ import { Alert, Tab, Tabs } from 'react-bootstrap';
 import { t } from '@superset-ui/translation';
 import styled from '@superset-ui/style';
 
+import {
+  PluginContext,
+  LoadingStatus,
+} from 'src/components/DynamicPlugins/PluginContext';
 import ControlPanelSection from './ControlPanelSection';
 import ControlRow from './ControlRow';
 import Control from './Control';
@@ -61,6 +65,9 @@ const Styles = styled.div`
 `;
 
 class ControlPanelsContainer extends React.Component {
+  // trigger updates to the component when async plugins load
+  static contextType = PluginContext;
+
   constructor(props) {
     super(props);
 
@@ -167,6 +174,15 @@ class ControlPanelsContainer extends React.Component {
   }
 
   render() {
+    const cpRegistry = getChartControlPanelRegistry();
+    if (
+      !cpRegistry.has(this.props.form_data.viz_type) &&
+      this.context.status === LoadingStatus.LOADING
+    ) {
+      // TODO replace with a snazzy loading spinner
+      return 'loading...';
+    }
+
     const querySectionsToRender = [];
     const displaySectionsToRender = [];
     this.sectionsToRender().forEach(section => {
