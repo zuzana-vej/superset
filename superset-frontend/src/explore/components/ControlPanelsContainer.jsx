@@ -171,9 +171,9 @@ class ControlPanelsContainer extends React.Component {
   }
 
   render() {
-    const cpRegistry = getChartControlPanelRegistry();
+    const controlPanelRegistry = getChartControlPanelRegistry();
     if (
-      !cpRegistry.has(this.props.form_data.viz_type) &&
+      !controlPanelRegistry.has(this.props.form_data.viz_type) &&
       this.context.loading
     ) {
       // TODO replace with a snazzy loading spinner

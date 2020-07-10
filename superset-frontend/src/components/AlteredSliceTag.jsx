@@ -53,9 +53,7 @@ export default class AlteredSliceTag extends React.Component {
     super(props);
     const diffs = this.getDiffs(props);
 
-    const controlsMap = getControlsForVizType(this.props.origFormData.viz_type);
-
-    this.state = { diffs, hasDiffs: !isEmpty(diffs), controlsMap };
+    this.state = { diffs, hasDiffs: !isEmpty(diffs) };
   }
 
   UNSAFE_componentWillReceiveProps(newProps) {
@@ -96,6 +94,7 @@ export default class AlteredSliceTag extends React.Component {
   }
 
   formatValue(value, key) {
+    const controlsMap = getControlsForVizType(this.props.origFormData.viz_type);
     // Format display value based on the control type
     // or the value type
     if (value === undefined) {
@@ -103,8 +102,8 @@ export default class AlteredSliceTag extends React.Component {
     } else if (value === null) {
       return 'null';
     } else if (
-      this.state.controlsMap[key] &&
-      this.state.controlsMap[key].type === 'AdhocFilterControl'
+      controlsMap[key] &&
+      controlsMap[key].type === 'AdhocFilterControl'
     ) {
       if (!value.length) {
         return '[]';
@@ -118,14 +117,11 @@ export default class AlteredSliceTag extends React.Component {
           return `${v.subject} ${v.operator} ${filterVal}`;
         })
         .join(', ');
-    } else if (
-      this.state.controlsMap[key] &&
-      this.state.controlsMap[key].type === 'BoundsControl'
-    ) {
+    } else if (controlsMap[key] && controlsMap[key].type === 'BoundsControl') {
       return `Min: ${value[0]}, Max: ${value[1]}`;
     } else if (
-      this.state.controlsMap[key] &&
-      this.state.controlsMap[key].type === 'CollectionControl'
+      controlsMap[key] &&
+      controlsMap[key].type === 'CollectionControl'
     ) {
       return value.map(v => safeStringify(v)).join(', ');
     } else if (typeof value === 'boolean') {
@@ -139,6 +135,7 @@ export default class AlteredSliceTag extends React.Component {
   }
 
   renderRows() {
+    const controlsMap = getControlsForVizType(this.props.origFormData.viz_type);
     const diffs = this.state.diffs;
     const rows = [];
     for (const key in diffs) {
@@ -146,11 +143,7 @@ export default class AlteredSliceTag extends React.Component {
         <Tr key={key}>
           <Td
             column="control"
-            data={
-              (this.state.controlsMap[key] &&
-                this.state.controlsMap[key].label) ||
-              key
-            }
+            data={(controlsMap[key] && controlsMap[key].label) || key}
           />
           <Td column="before">{this.formatValue(diffs[key].before, key)}</Td>
           <Td column="after">{this.formatValue(diffs[key].after, key)}</Td>
