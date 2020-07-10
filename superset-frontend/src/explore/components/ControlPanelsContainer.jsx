@@ -25,10 +25,7 @@ import { Alert, Tab, Tabs } from 'react-bootstrap';
 import { t } from '@superset-ui/translation';
 import styled from '@superset-ui/style';
 
-import {
-  PluginContext,
-  LoadingStatus,
-} from 'src/components/DynamicPlugins/PluginContext';
+import { PluginContext } from 'src/components/DynamicPlugins/PluginContext';
 import ControlPanelSection from './ControlPanelSection';
 import ControlRow from './ControlRow';
 import Control from './Control';
@@ -177,7 +174,7 @@ class ControlPanelsContainer extends React.Component {
     const cpRegistry = getChartControlPanelRegistry();
     if (
       !cpRegistry.has(this.props.form_data.viz_type) &&
-      this.context.status === LoadingStatus.LOADING
+      this.context.loading
     ) {
       // TODO replace with a snazzy loading spinner
       return 'loading...';

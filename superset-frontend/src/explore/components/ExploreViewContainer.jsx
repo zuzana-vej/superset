@@ -24,10 +24,7 @@ import { connect } from 'react-redux';
 import styled from '@superset-ui/style';
 import { t } from '@superset-ui/translation';
 
-import {
-  PluginContext,
-  LoadingStatus,
-} from 'src/components/DynamicPlugins/PluginContext';
+import { PluginContext } from 'src/components/DynamicPlugins/PluginContext';
 import ExploreChartPanel from './ExploreChartPanel';
 import ControlPanelsContainer from './ControlPanelsContainer';
 import SaveModal from './SaveModal';
@@ -334,7 +331,7 @@ class ExploreViewContainer extends React.Component {
   }
 
   render() {
-    if (this.context.status === LoadingStatus.LOADING) {
+    if (this.context.loading) {
       return 'loading...';
     }
     if (this.props.standalone) {

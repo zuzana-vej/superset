@@ -30,12 +30,9 @@ import {
 import { t } from '@superset-ui/translation';
 import { getChartMetadataRegistry } from '@superset-ui/chart';
 
+import { useDynamicPluginContext } from 'src/components/DynamicPlugins/PluginContext';
 import ControlHeader from '../ControlHeader';
 import './VizTypeControl.less';
-import {
-  useDynamicPluginContext,
-  LoadingStatus,
-} from 'src/components/DynamicPlugins/PluginContext';
 
 const propTypes = {
   description: PropTypes.string,
@@ -49,7 +46,7 @@ const defaultProps = {
   onChange: () => {},
 };
 
-const registry = getChartMetadataRegistry();
+const chartMetadataRegistry = getChartMetadataRegistry();
 
 const IMAGE_PER_ROW = 6;
 const LABEL_STYLE = { cursor: 'pointer' };
@@ -107,7 +104,7 @@ const typesWithDefaultOrder = new Set(DEFAULT_ORDER);
 
 function VizSupportWarning({ registry, vizType }) {
   const state = useDynamicPluginContext();
-  if (state.status === LoadingStatus.LOADING || registry.has(vizType)) {
+  if (state.loading || registry.has(vizType)) {
     return null;
   }
   return (
@@ -182,13 +179,17 @@ export default class VizTypeControl extends React.PureComponent {
     const { value } = this.props;
 
     const filterString = filter.toLowerCase();
-    const filteredTypes = DEFAULT_ORDER.filter(type => registry.has(type))
+    const filteredTypes = DEFAULT_ORDER.filter(type =>
+      chartMetadataRegistry.has(type),
+    )
       .map(type => ({
         key: type,
-        value: registry.get(type),
+        value: chartMetadataRegistry.get(type),
       }))
       .concat(
-        registry.entries().filter(({ key }) => !typesWithDefaultOrder.has(key)),
+        chartMetadataRegistry
+          .entries()
+          .filter(({ key }) => !typesWithDefaultOrder.has(key)),
       )
       .filter(entry => entry.value.name.toLowerCase().includes(filterString));
 
@@ -218,9 +219,14 @@ export default class VizTypeControl extends React.PureComponent {
         >
           <>
             <Label onClick={this.toggleModal} style={LABEL_STYLE}>
-              {registry.has(value) ? registry.get(value).name : `${value}`}
+              {chartMetadataRegistry.has(value)
+                ? chartMetadataRegistry.get(value).name
+                : `${value}`}
             </Label>
-            <VizSupportWarning registry={registry} vizType={value} />
+            <VizSupportWarning
+              registry={chartMetadataRegistry}
+              vizType={value}
+            />
           </>
         </OverlayTrigger>
         <Modal
