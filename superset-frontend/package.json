@@ -229,7 +229,7 @@
     "@hot-loader/react-dom": "^16.14.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@storybook/addon-actions": "^8.1.11",
-    "@storybook/addon-controls": "^8.1.11",
+    "@storybook/addon-controls": "^8.2.9",
     "@storybook/addon-essentials": "^8.1.11",
     "@storybook/addon-links": "^8.1.11",
     "@storybook/addon-mdx-gfm": "^8.1.11",
